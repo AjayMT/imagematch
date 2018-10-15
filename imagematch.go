@@ -103,20 +103,20 @@ func computeDistance(matA [][]bool, matB [][]bool, tolerance float64) float64 {
 }
 
 func scaleMatrix(mat [][]bool, width int, height int) [][]bool {
-	squashed := make([][]bool, width)
+	scaled := make([][]bool, width)
 
-	for x := 0; x < len(squashed); x++ {
-		squashed[x] = make([]bool, height)
+	for x := 0; x < len(scaled); x++ {
+		scaled[x] = make([]bool, height)
 
-		for y := 0; y < len(squashed[x]); y++ {
+		for y := 0; y < len(scaled[x]); y++ {
 			matx := int((float64(x) / float64(width)) * float64(len(mat)))
 			maty := int(((float64(y)) / float64(height)) * float64(len(mat[0])))
 
-			squashed[x][y] = mat[matx][maty]
+			scaled[x][y] = mat[matx][maty]
 		}
 	}
 
-	return squashed
+	return scaled
 }
 
 func trimMatrix(mat [][]bool) [][]bool {
@@ -131,6 +131,7 @@ func trimMatrix(mat [][]bool) [][]bool {
 		for _, pix := range col {
 			if pix {
 				hastrue = true
+				break
 			}
 		}
 
@@ -146,6 +147,7 @@ func trimMatrix(mat [][]bool) [][]bool {
 		for _, pix := range mat[i] {
 			if pix {
 				hastrue = true
+				break
 			}
 		}
 
@@ -161,6 +163,7 @@ func trimMatrix(mat [][]bool) [][]bool {
 		for x := 0; x < len(mat); x++ {
 			if mat[x][y] {
 				hastrue = true
+				break
 			}
 		}
 
@@ -176,6 +179,7 @@ func trimMatrix(mat [][]bool) [][]bool {
 		for x := 0; x < len(mat); x++ {
 			if mat[x][y] {
 				hastrue = true
+				break
 			}
 		}
 

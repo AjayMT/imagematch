@@ -18,4 +18,9 @@ go build
 imagematch <training-data> <test-image> <tolerance>
 ```
 
+For example, to match `testdata/test_a.png` with an image from `traindata/fixed-width/` (PNGs of a fixed width font) with a tolerance of 0.5:
+```
+imagematch traindata/fixed-width testdata/test_a.png 0.5
+```
+
 I will eventually get around to documenting this better.

@@ -92,6 +92,10 @@ func computeDistance(matA [][]bool, matB [][]bool, tolerance float64) float64 {
 
 			if len(distances) == 0 {
 				// no pixel within tolerance range
+				// TODO real solution
+				faraway := math.Sqrt(math.Pow(float64(len(refmatrix)), 2) +
+					math.Pow(float64(len(refmatrix[0])), 2))
+				pixdistances = append(pixdistances, faraway)
 			} else {
 				_, mindist := minSlice(distances)
 				pixdistances = append(pixdistances, mindist)

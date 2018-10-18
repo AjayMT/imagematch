@@ -6,6 +6,7 @@ import (
 	"image/png"
 	"image"
 	"os"
+	"sync"
 	"io/ioutil"
 	"path/filepath"
 	"math"
@@ -240,20 +241,31 @@ func main() {
 
 	var keys []string
 	var distances []float64
+	var wg sync.WaitGroup
 
-	for _, file := range files {
-		fmt.Printf("Computing distance to %s... ", file.Name())
-		dtfile, _ := os.Open(filepath.Join(datapath, file.Name()))
-		dtimage, _ := png.Decode(dtfile)
-		matrix := trimMatrix(toMatrix(dtimage))
+	for _, f := range files {
+		wg.Add(1)
 
-		width := len(matrix)
-		height := len(matrix[0])
-		distance := computeDistance(matrix, scaleMatrix(testmatrix, width, height), tolerance)
-		keys = append(keys, file.Name())
-		distances = append(distances, distance)
-		fmt.Printf("%f\n", distance)
+		go func(file os.FileInfo) {
+			defer wg.Done()
+
+			fmt.Printf("Computing distance to %s...\n", file.Name())
+
+			dtfile, _ := os.Open(filepath.Join(datapath, file.Name()))
+			dtimage, _ := png.Decode(dtfile)
+			matrix := trimMatrix(toMatrix(dtimage))
+			width := len(matrix)
+			height := len(matrix[0])
+
+			distance := computeDistance(matrix, scaleMatrix(testmatrix, width, height), tolerance)
+			keys = append(keys, file.Name())
+			distances = append(distances, distance)
+
+			fmt.Printf("Distance to %s: %f\n", file.Name(), distance)
+		}(f)
 	}
+
+	wg.Wait()
 
 	minindex, _ := minSlice(distances)
 	fmt.Printf("\nClosest match: %s\n", keys[minindex])

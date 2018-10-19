@@ -38,27 +38,25 @@ func avgSlice(slice []float64) float64 {
 	return sum / float64(len(slice))
 }
 
-func computeDistance(matA [][]bool, matB [][]bool, tolerance float64) float64 {
-	refmatrix := matA
-	testmatrix := matB
-	sizeA := 0
-	sizeB := 0
+func ComputeDistance(refmatrix [][]bool, testmatrix [][]bool, tolerance float64) float64 {
+	refsize := 0
+	testsize := 0
 
-	for _, col := range matA {
+	for _, col := range refmatrix {
 		for _, pix := range col {
-			if pix { sizeA++ }
+			if pix { refsize++ }
 		}
 	}
 
-	for _, col := range matB {
+	for _, col := range testmatrix {
 		for _, pix := range col {
-			if pix { sizeB++ }
+			if pix { testsize++ }
 		}
 	}
 
-	if sizeA > sizeB {
-		refmatrix = matB
-		testmatrix = matA
+	if refsize > testsize {
+		refsize, testsize = testsize, refsize
+		refmatrix, testmatrix = testmatrix, refmatrix
 	}
 
 	var pixdistances []float64
@@ -104,10 +102,10 @@ func computeDistance(matA [][]bool, matB [][]bool, tolerance float64) float64 {
 		}
 	}
 
-	return avgSlice(pixdistances)
+	return avgSlice(pixdistances)// + (float64(testsize) / float64(refsize))
 }
 
-func scaleMatrix(mat [][]bool, width int, height int) [][]bool {
+func ScaleMatrix(mat [][]bool, width int, height int) [][]bool {
 	scaled := make([][]bool, width)
 
 	for x := 0; x < len(scaled); x++ {
@@ -124,7 +122,7 @@ func scaleMatrix(mat [][]bool, width int, height int) [][]bool {
 	return scaled
 }
 
-func trimMatrix(mat [][]bool) [][]bool {
+func TrimMatrix(mat [][]bool) [][]bool {
 	minx := 0
 	miny := 0
 	maxx := len(mat)
@@ -203,7 +201,7 @@ func trimMatrix(mat [][]bool) [][]bool {
 	return trimmed
 }
 
-func toMatrix(img image.Image) [][]bool {
+func ToMatrix(img image.Image) [][]bool {
 	minx := img.Bounds().Min.X
 	miny := img.Bounds().Min.Y
 	maxx := img.Bounds().Max.X
@@ -235,7 +233,7 @@ func main() {
 
 	testfile, _ := os.Open(testpath)
 	testimage, _ := png.Decode(testfile)
-	testmatrix := trimMatrix(toMatrix(testimage))
+	testmatrix := TrimMatrix(ToMatrix(testimage))
 
 	fmt.Printf("done.\n\n")
 
@@ -253,11 +251,11 @@ func main() {
 
 			dtfile, _ := os.Open(filepath.Join(datapath, file.Name()))
 			dtimage, _ := png.Decode(dtfile)
-			matrix := trimMatrix(toMatrix(dtimage))
+			matrix := TrimMatrix(ToMatrix(dtimage))
 			width := len(matrix)
 			height := len(matrix[0])
 
-			distance := computeDistance(matrix, scaleMatrix(testmatrix, width, height), tolerance)
+			distance := ComputeDistance(matrix, ScaleMatrix(testmatrix, width, height), tolerance)
 			keys = append(keys, file.Name())
 			distances = append(distances, distance)
 

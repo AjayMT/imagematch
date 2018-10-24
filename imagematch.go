@@ -212,14 +212,14 @@ func main() {
 
 	fmt.Printf("done.\n\n")
 
-	var keys []string
-	var distances []float64
+	keys := make([]string, len(files))
+	distances := make([]float64, len(files))
 	var wg sync.WaitGroup
 
-	for _, f := range files {
+	for i, f := range files {
 		wg.Add(1)
 
-		/*go*/ func(file os.FileInfo) {
+		func(index int, file os.FileInfo) {
 			defer wg.Done()
 
 			dtfile, _ := os.Open(filepath.Join(datapath, file.Name()))
@@ -229,11 +229,11 @@ func main() {
 			height := len(matrix[0])
 
 			distance := ComputeDistance(matrix, ScaleMatrix(testmatrix, width, height))
-			keys = append(keys, file.Name())
-			distances = append(distances, distance)
+			keys[i] = file.Name()
+			distances[i] = distance
 
 			fmt.Printf("Distance to %s: %f\n", file.Name(), distance)
-		}(f)
+		}(i, f)
 	}
 
 	wg.Wait()

@@ -219,7 +219,7 @@ func main() {
 	for i, f := range files {
 		wg.Add(1)
 
-		func(index int, file os.FileInfo) {
+		go func(index int, file os.FileInfo) {
 			defer wg.Done()
 
 			dtfile, _ := os.Open(filepath.Join(datapath, file.Name()))
@@ -228,9 +228,10 @@ func main() {
 			width := len(matrix)
 			height := len(matrix[0])
 
-			distance := ComputeDistance(matrix, ScaleMatrix(testmatrix, width, height))
-			keys[i] = file.Name()
-			distances[i] = distance
+			distance := ComputeDistance(matrix,
+				ScaleMatrix(testmatrix, width, height))
+			keys[index] = file.Name()
+			distances[index] = distance
 
 			fmt.Printf("Distance to %s: %f\n", file.Name(), distance)
 		}(i, f)

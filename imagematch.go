@@ -39,32 +39,37 @@ func avgSlice(slice []float64) float64 {
 
 func ComputeDistance(matA [][]float64, matB [][]float64) float64 {
 	var differences []float64
+	integralA := make([][]float64, len(matA))
+	integralB := make([][]float64, len(matB))
 
 	for x, col := range matA {
+		integralA[x] = make([]float64, len(col))
+		integralB[x] = make([]float64, len(col))
+
 		for y, _ := range col {
-			var prevxa, prevya, prevxya float64
-			var prevxb, prevyb, prevxyb float64
+			prevxA, prevyA, prevxyA := 0.0, 0.0, 0.0
+			prevxB, prevyB, prevxyB := 0.0, 0.0, 0.0
 
 			if x > 0 {
-				prevxa = matA[x - 1][y]
-				prevxb = matB[x - 1][y]
+				prevxA = integralA[x - 1][y]
+				prevxB = integralB[x - 1][y]
 			}
 
 			if y > 0 {
-				prevya = matA[x][y - 1]
-				prevyb = matB[x][y - 1]
+				prevyA = integralA[x][y - 1]
+				prevyB = integralB[x][y - 1]
 			}
 
 			if x > 0 && y > 0 {
-				prevxya = matA[x - 1][y - 1]
-				prevxyb = matB[x - 1][y - 1]
+				prevxyA = integralA[x - 1][y - 1]
+				prevxyB = integralB[x - 1][y - 1]
 			}
 
-			sumA := matA[x][y] + prevxa + prevya - prevxya
-			sumB := matB[x][y] + prevxb + prevyb - prevxyb
+			integralA[x][y] = matA[x][y] + prevxA + prevyA - prevxyA
+			integralB[x][y] = matB[x][y] + prevxB + prevyB - prevxyB
 
 			differences = append(differences,
-				math.Abs(sumA - sumB))
+				math.Abs(integralA[x][y] - integralB[x][y]))
 		}
 	}
 

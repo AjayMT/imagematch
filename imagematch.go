@@ -31,7 +31,7 @@ func minSlice(slice []float64) (int, float64) {
 func avgSlice(slice []float64) float64 {
 	if len(slice) == 0 { panic("cannot find average of empty slice") }
 
-	var sum float64 = 0
+	sum := 0.0
 	for _, n := range slice { sum += n }
 
 	return sum / float64(len(slice))
@@ -45,22 +45,12 @@ func ComputeDistance(matA [][]float64, matB [][]float64) float64 {
 			var prevxa, prevya, prevxya float64
 			var prevxb, prevyb, prevxyb float64
 
-			if x == 0 {
-				prevxa = 0
-				prevxb = 0
-				prevxya = 0
-				prevxyb = 0
-			} else {
+			if x > 0 {
 				prevxa = matA[x - 1][y]
 				prevxb = matB[x - 1][y]
 			}
 
-			if y == 0 {
-				prevya = 0
-				prevyb = 0
-				prevxya = 0
-				prevxyb = 0
-			} else {
+			if y > 0 {
 				prevya = matA[x][y - 1]
 				prevyb = matB[x][y - 1]
 			}

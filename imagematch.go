@@ -37,6 +37,17 @@ func avgSlice(slice []float64) float64 {
 	return sum / float64(len(slice))
 }
 
+func sdSlice(slice []float64) float64 {
+	if len(slice) == 0 { panic("cannot find standard deviation of empty slice") }
+
+	sqsum := 0.0
+	avg := avgSlice(slice)
+
+	for _, n := range slice { sqsum += math.Pow(n - avg, 2) }
+
+	return math.Sqrt(sqsum / float64(len(slice)))
+}
+
 func ComputeDistance(matA [][]float64, matB [][]float64) float64 {
 	var differences []float64
 	integralA := make([][]float64, len(matA))
@@ -73,7 +84,7 @@ func ComputeDistance(matA [][]float64, matB [][]float64) float64 {
 		}
 	}
 
-	return avgSlice(differences)
+	return /*avgSlice(differences) + */sdSlice(differences)
 }
 
 func ScaleMatrix(mat [][]float64, width int, height int) [][]float64 {

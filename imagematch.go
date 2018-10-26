@@ -84,7 +84,7 @@ func ComputeDistance(matA [][]float64, matB [][]float64) float64 {
 		}
 	}
 
-	return /*avgSlice(differences) + */sdSlice(differences)
+	return avgSlice(differences)/* + sdSlice(differences)*/
 }
 
 func ScaleMatrix(mat [][]float64, width int, height int) [][]float64 {

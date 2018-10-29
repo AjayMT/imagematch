@@ -48,43 +48,51 @@ func sdSlice(slice []float64) float64 {
 	return math.Sqrt(sqsum / float64(len(slice)))
 }
 
-func ComputeDistance(matA [][]float64, matB [][]float64) float64 {
-	var differences []float64
-	integralA := make([][]float64, len(matA))
-	integralB := make([][]float64, len(matB))
+func ComputeIntegral(matrix [][]float64) [][]float64 {
+	width, height := len(matrix), len(matrix[0])
+	integral := make([][]float64, width)
 
-	for x, col := range matA {
-		integralA[x] = make([]float64, len(col))
-		integralB[x] = make([]float64, len(col))
+	for x, col := range matrix {
+		integral[x] = make([]float64, height)
 
-		for y, _ := range col {
-			prevxA, prevyA, prevxyA := 0.0, 0.0, 0.0
-			prevxB, prevyB, prevxyB := 0.0, 0.0, 0.0
+		for y, val := range col {
+			prevx, prevy, prevxy := 0.0, 0.0, 0.0
 
 			if x > 0 {
-				prevxA = integralA[x - 1][y]
-				prevxB = integralB[x - 1][y]
+				prevx = integral[x - 1][y]
 			}
 
 			if y > 0 {
-				prevyA = integralA[x][y - 1]
-				prevyB = integralB[x][y - 1]
+				prevy = integral[x][y - 1]
 			}
 
 			if x > 0 && y > 0 {
-				prevxyA = integralA[x - 1][y - 1]
-				prevxyB = integralB[x - 1][y - 1]
+				prevxy = integral[x - 1][y - 1]
 			}
 
-			integralA[x][y] = matA[x][y] + prevxA + prevyA - prevxyA
-			integralB[x][y] = matB[x][y] + prevxB + prevyB - prevxyB
+			integral[x][y] = val + prevx + prevy - prevxy
+		}
+	}
 
-			diff := math.Abs(integralA[x][y] - integralB[x][y])
+	return integral
+}
+
+func ComputeDistance(matA [][]float64, matB [][]float64) float64 {
+	var differences []float64
+	integralA := ComputeIntegral(matA)
+	integralB := ComputeIntegral(matB)
+	width, height := len(matA), len(matA[0])
+	maxA := integralA[width - 1][height - 1]
+	maxB := integralB[width - 1][height - 1]
+
+	for x, col := range integralA {
+		for y, val := range col {
+			diff := math.Abs((val / maxA) - (integralB[x][y] / maxB))
 			differences = append(differences, diff)
 		}
 	}
 
-	return avgSlice(differences)/* + sdSlice(differences)*/
+	return avgSlice(differences)// + sdSlice(differences)
 }
 
 func ScaleMatrix(mat [][]float64, width int, height int) [][]float64 {

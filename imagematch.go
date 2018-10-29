@@ -79,8 +79,8 @@ func ComputeDistance(matA [][]float64, matB [][]float64) float64 {
 			integralA[x][y] = matA[x][y] + prevxA + prevyA - prevxyA
 			integralB[x][y] = matB[x][y] + prevxB + prevyB - prevxyB
 
-			differences = append(differences,
-				math.Abs(integralA[x][y] - integralB[x][y]))
+			diff := math.Abs(integralA[x][y] - integralB[x][y])
+			differences = append(differences, diff)
 		}
 	}
 
@@ -90,14 +90,16 @@ func ComputeDistance(matA [][]float64, matB [][]float64) float64 {
 func ScaleMatrix(mat [][]float64, width int, height int) [][]float64 {
 	scaled := make([][]float64, width)
 
-	for x := 0; x < len(scaled); x++ {
+	for x := 0; x < width; x++ {
 		scaled[x] = make([]float64, height)
 
-		for y := 0; y < len(scaled[x]); y++ {
-			matx := int((float64(x) / float64(width)) * float64(len(mat)))
-			maty := int(((float64(y)) / float64(height)) * float64(len(mat[0])))
+		for y := 0; y < height; y++ {
+			matx := math.Round((float64(x) / float64(width - 1)) *
+				float64(len(mat) - 1))
+			maty := math.Round(((float64(y)) / float64(height - 1)) *
+				float64(len(mat[0]) - 1))
 
-			scaled[x][y] = mat[matx][maty]
+			scaled[x][y] = mat[int(matx)][int(maty)]
 		}
 	}
 

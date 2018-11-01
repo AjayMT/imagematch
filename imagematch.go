@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"math"
+	"strconv"
 )
 
 func minSlice(slice []float64) (int, float64) {
@@ -222,6 +223,7 @@ func ToMatrix(img image.Image) [][]float64 {
 func main() {
 	datapath := os.Args[1]
 	testpath := os.Args[2]
+	k, _ := strconv.Atoi(os.Args[3])
 
 	files, _ := ioutil.ReadDir(datapath)
 
@@ -254,12 +256,21 @@ func main() {
 			keys[index] = file.Name()
 			distances[index] = distance
 
-			fmt.Printf("Distance to %s: %f\n", file.Name(), distance)
+			// fmt.Printf("Distance to %s: %f\n", file.Name(), distance)
 		}(i, f)
 	}
 
 	wg.Wait()
 
-	minindex, mindist := minSlice(distances)
-	fmt.Printf("\nClosest match: %s %f\n", keys[minindex], mindist)
+	for i := 0; i < k; i++ {
+		minindex, mindist := minSlice(distances)
+		distances[minindex] = distances[len(distances) - 1]
+		distances = distances[:len(distances) - 1]
+
+		fmt.Printf("\nClosest match: %s %f\n", keys[minindex], mindist)
+
+		keys[minindex] = keys[len(keys) - 1]
+		keys = keys[:len(keys) - 1]
+
+	}
 }

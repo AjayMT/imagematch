@@ -271,6 +271,5 @@ func main() {
 
 		keys[minindex] = keys[len(keys) - 1]
 		keys = keys[:len(keys) - 1]
-
 	}
 }

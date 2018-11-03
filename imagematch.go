@@ -208,11 +208,10 @@ func ToMatrix(img image.Image) [][]float64 {
 		for y := 0; y < len(matrix[x]); y++ {
 			r, g, b, a := img.At(minx + x, miny + y).RGBA()
 			isblack := r == 0 && g == 0 && b == 0 && a != 0
+			matrix[x][y] = 0.0
 
 			if isblack {
 				matrix[x][y] = 1.0
-			} else {
-				matrix[x][y] = 0.0
 			}
 		}
 	}
@@ -227,7 +226,7 @@ func main() {
 
 	files, _ := ioutil.ReadDir(datapath)
 
-	fmt.Printf("Processing %s... ", testpath)
+	fmt.Printf("Reading %s... ", testpath)
 
 	testfile, _ := os.Open(testpath)
 	testimage, _ := png.Decode(testfile)
@@ -238,6 +237,8 @@ func main() {
 	keys := make([]string, len(files))
 	distances := make([]float64, len(files))
 	var wg sync.WaitGroup
+
+	fmt.Printf("Computing distances... ")
 
 	for i, f := range files {
 		wg.Add(1)
@@ -262,12 +263,14 @@ func main() {
 
 	wg.Wait()
 
+	fmt.Printf("done.\n\n")
+
 	for i := 0; i < k; i++ {
 		minindex, mindist := minSlice(distances)
 		distances[minindex] = distances[len(distances) - 1]
 		distances = distances[:len(distances) - 1]
 
-		fmt.Printf("\nClosest match: %s %f\n", keys[minindex], mindist)
+		fmt.Printf("Closest match: %s %f\n", keys[minindex], mindist)
 
 		keys[minindex] = keys[len(keys) - 1]
 		keys = keys[:len(keys) - 1]

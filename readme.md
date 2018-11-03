@@ -27,6 +27,7 @@ TODO figure out how to calculate optimal `k` value
 This program does not process colors or binarize input images -- it ignores all pixels that are not completely black. It is also not very accurate without a large dataset of PNGs, which I haven't found or compiled yet. My primary goals when writing this program were:
 - learn Go
 - write a simple classification algorithm
+
 which is why it isn't very sophisticated.
 
 This program is also entirely stateless, i.e it can classify any test image based on any dataset. As such, it cannot be 'trained' in the traditional sense -- 'reference' dataset is probably a more accurate term than 'training' dataset. This is because it is not based on a neural network or any form of gradient descent. I wanted to find a simpler, mathematically deterministic way to compare two arbitrary matrices, which is what this program does.
